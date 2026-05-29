@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyCast Weather</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="weather-default" data-api-endpoint="{{ url_for('api_weather') }}">
+  <div class="background-orb orb-one"></div>
+  <div class="background-orb orb-two"></div>
+
+  <main class="weather-app">
+    <section class="hero-panel glass-panel">
+      <div class="hero-topbar">
+        <div>
+          <p class="eyebrow">Modern Weather Dashboard</p>
+          <h1>SkyCast</h1>
+        </div>
+        <div class="time-chip">
+          <span id="currentDateTime">Loading time...</span>
+        </div>
+      </div>
+
+      <form id="weatherForm" class="search-bar" autocomplete="off">
+        <label class="sr-only" for="cityInput">Search city</label>
+        <input id="cityInput" name="city" type="text" placeholder="Search for a city, e.g. London" />
+        <button id="searchButton" type="submit">Search</button>
+      </form>
+
+      <p id="errorMessage" class="error-message" role="alert" aria-live="polite"></p>
+      <div id="loadingState" class="loading-state">Fetching weather data...</div>
+
+      <div class="weather-summary">
+        <div class="summary-copy">
+          <p class="summary-label">Current Weather</p>
+          <h2 id="cityName">Search for a city to begin</h2>
+          <p id="weatherDescription" class="summary-description">
+            Enter a city name above to view temperature, forecast, and live conditions.
+          </p>
+          <p id="localTime" class="local-time">Local time will appear here after search.</p>
+        </div>
+
+        <div class="summary-visual">
+          <div class="temperature-wrap">
+            <span id="temperature">--</span>
+            <span class="temperature-unit">°C</span>
+          </div>
+          <div class="icon-wrap">
+            <img id="weatherIcon" class="weather-icon" src="" alt="Weather icon" />
+            <span id="weatherIconAlt" class="icon-caption">Weather icon</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="metric-grid">
+        <article class="metric-card reveal">
+          <span class="metric-label">Condition</span>
+          <strong id="weatherCondition">--</strong>
+        </article>
+        <article class="metric-card reveal">
+          <span class="metric-label">Feels Like</span>
+          <strong id="feelsLike">--</strong>
+        </article>
+        <article class="metric-card reveal">
+          <span class="metric-label">Humidity</span>
+          <strong id="humidity">--</strong>
+        </article>
+        <article class="metric-card reveal">
+          <span class="metric-label">Wind Speed</span>
+          <strong id="windSpeed">--</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="forecast-section glass-panel">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">5-Day Outlook</p>
+          <h3>Forecast</h3>
+        </div>
+        <p class="section-note">Five-day forecast cards update instantly after each search.</p>
+      </div>
+      <div id="forecastCards" class="forecast-grid"></div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
