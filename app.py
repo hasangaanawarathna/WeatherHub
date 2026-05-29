@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from collections import defaultdict
 from datetime import datetime, timezone
 from typing import Any
@@ -11,7 +10,7 @@ from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
 
-API_KEY = os.getenv("OPENWEATHERMAP_API_KEY", "YOUR_API_KEY_HERE")
+API_KEY = "YOUR_API_KEY"
 CURRENT_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
 FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast"
 
@@ -30,6 +29,13 @@ def request_openweather(url: str, city: str) -> dict[str, Any]:
 
     if response.status_code != 200:
         message = payload.get("message", "Unable to load weather data.")
+        normalized = message.strip().lower()
+
+        if normalized == "city not found":
+            raise ValueError("Invalid city name. Please check the spelling and try again.")
+        if response.status_code == 401:
+            raise ValueError("Invalid OpenWeatherMap API key. Update API_KEY in app.py.")
+
         raise ValueError(message.capitalize())
 
     return payload
@@ -99,11 +105,6 @@ def build_forecast_items(forecast_payload: dict[str, Any]) -> list[dict[str, Any
 
 def build_weather_payload(city: str) -> dict[str, Any]:
     """Fetch current conditions and a 5-day forecast for a city."""
-    if not API_KEY or API_KEY == "YOUR_API_KEY_HERE":
-        raise ValueError(
-            "Add your OpenWeatherMap API key to the OPENWEATHERMAP_API_KEY environment variable."
-        )
-
     city_name = city.strip()
     if not city_name:
         raise ValueError("Please enter a city name.")
@@ -133,7 +134,7 @@ def build_weather_payload(city: str) -> dict[str, Any]:
 @app.get("/")
 def index() -> str:
     """Render the main weather dashboard."""
-    return render_template("index.html", api_ready=API_KEY not in {"", "YOUR_API_KEY_HERE"})
+    return render_template("index.html")
 
 
 @app.get("/api/weather")

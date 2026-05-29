@@ -98,7 +98,7 @@ async function fetchWeather(city) {
   setLoading(true);
   try {
     const response = await fetch(url);
-    const payload = await response.json();
+    const payload = await response.json().catch(() => ({ success: false, message: 'API failure. Please try again.' }));
 
     if (!response.ok || !payload.success) {
       throw new Error(payload.message || 'Unable to load weather data.');
@@ -125,11 +125,11 @@ cityForm.addEventListener('submit', (event) => {
   fetchWeather(city);
 });
 
+cityInput.addEventListener('input', () => {
+  if (errorMessage.classList.contains('is-visible')) {
+    clearError();
+  }
+});
+
 updateClock();
 setInterval(updateClock, 1000);
-
-const initialCity = new URLSearchParams(window.location.search).get('city');
-if (initialCity) {
-  cityInput.value = initialCity;
-  fetchWeather(initialCity);
-}
